@@ -18,9 +18,10 @@ const TABLE_SQL = `CREATE TABLE IF NOT EXISTS login_attempts (
 )`;
 
 // ---- D1 最小接口（与 src/lib/d1.db.ts 同构，不引入整个存储类） ----
+// 只用 prepare / bind / first / run——这几个是线上已验证可用的原语；
+// 不要用 db.exec()，它在 Pages edge 运行时里不可靠。
 interface D1Database {
   prepare(sql: string): D1PreparedStatement;
-  exec(sql: string): Promise<unknown>;
 }
 
 interface D1PreparedStatement {
@@ -45,7 +46,8 @@ let tableReady: Promise<void> | null = null;
 async function ensureTable(db: D1Database): Promise<void> {
   if (!tableReady) {
     tableReady = db
-      .exec(TABLE_SQL)
+      .prepare(TABLE_SQL)
+      .run()
       .then(() => undefined)
       .catch((err) => {
         // 建表失败不缓存，下次调用重试
