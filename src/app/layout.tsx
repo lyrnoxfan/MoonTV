@@ -79,8 +79,13 @@ export default async function RootLayout({
   }
 
   // 将运行时配置注入到全局 window 对象，供客户端在运行时读取
+  // 注意：不要把 STORAGE_TYPE 等后端类型下发到前端——这段脚本内联在
+  // 每个页面（含未登录可见的 /login），会直接暴露持久化后端。
+  // 前端只需要知道“是否需要用户名”，用布尔值代替原始存储类型。
   const runtimeConfig = {
-    STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage',
+    REQUIRE_USERNAME:
+      (process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage') !==
+      'localstorage',
     ENABLE_REGISTER: enableRegister,
     IMAGE_PROXY: imageProxy,
     DOUBAN_PROXY: doubanProxy,

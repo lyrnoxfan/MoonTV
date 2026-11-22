@@ -78,18 +78,25 @@ const CACHE_VERSION = '1.0.0';
 const CACHE_EXPIRE_TIME = 60 * 60 * 1000; // 一小时缓存过期
 
 // ---- 环境变量 ----
-const STORAGE_TYPE = (() => {
-  const raw =
-    (typeof window !== 'undefined' &&
-      (window as any).RUNTIME_CONFIG?.STORAGE_TYPE) ||
-    (process.env.STORAGE_TYPE as
-      | 'localstorage'
-      | 'redis'
-      | 'd1'
-      | 'upstash'
-      | undefined) ||
-    'localstorage';
-  return raw;
+// 前端只区分“本地”与“云端”，不读取后端类型名。RUNTIME_CONFIG 里不再
+// 下发 STORAGE_TYPE（会暴露持久化后端），只下发 REQUIRE_USERNAME 布尔值。
+// 这里把“云端”统一归一化为 'remote'，下面所有 !== 'localstorage'
+// 的判断保持不变。
+const STORAGE_TYPE = ((): 'localstorage' | 'remote' => {
+  if (
+    typeof window !== 'undefined' &&
+    (window as any).RUNTIME_CONFIG?.REQUIRE_USERNAME
+  ) {
+    return 'remote';
+  }
+  const envType = process.env.STORAGE_TYPE as
+    | 'localstorage'
+    | 'redis'
+    | 'd1'
+    | 'upstash'
+    | undefined;
+  if (envType && envType !== 'localstorage') return 'remote';
+  return 'localstorage';
 })();
 
 // ---------------- 搜索历史相关常量 ----------------

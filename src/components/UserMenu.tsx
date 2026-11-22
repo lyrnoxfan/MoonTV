@@ -21,7 +21,8 @@ export const UserMenu: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [authInfo, setAuthInfo] = useState<AuthInfo | null>(null);
-  const [storageType, setStorageType] = useState<string>('localstorage');
+  // 是否为云端存储（localstorage 以外）。只用布尔值，不读取后端类型名。
+  const [isRemoteStorage, setIsRemoteStorage] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   // 设置相关状态
@@ -53,9 +54,9 @@ export const UserMenu: React.FC = () => {
       const auth = getAuthInfoFromBrowserCookie();
       setAuthInfo(auth);
 
-      const type =
-        (window as any).RUNTIME_CONFIG?.STORAGE_TYPE || 'localstorage';
-      setStorageType(type);
+      setIsRemoteStorage(
+        Boolean((window as any).RUNTIME_CONFIG?.REQUIRE_USERNAME)
+      );
     }
   }, []);
 
@@ -293,8 +294,7 @@ export const UserMenu: React.FC = () => {
     authInfo?.role === 'owner' || authInfo?.role === 'admin';
 
   // 检查是否显示修改密码按钮
-  const showChangePassword =
-    authInfo?.role !== 'owner' && storageType !== 'localstorage';
+  const showChangePassword = authInfo?.role !== 'owner' && isRemoteStorage;
 
   // 角色中文映射
   const getRoleText = (role?: string) => {
@@ -346,7 +346,7 @@ export const UserMenu: React.FC = () => {
               </div>
               <div className='text-[10px] text-gray-400 dark:text-gray-500'>
                 数据存储：
-                {storageType === 'localstorage' ? '本地' : storageType}
+                {isRemoteStorage ? '云端' : '本地'}
               </div>
             </div>
           </div>

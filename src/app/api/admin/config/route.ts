@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     const result: AdminConfigResult = {
       Role: 'owner',
       Config: config,
+      StorageType: storageType,
     };
     if (username === process.env.USERNAME) {
       result.Role = 'owner';

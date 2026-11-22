@@ -124,9 +124,15 @@ interface UserConfigProps {
   config: AdminConfig | null;
   role: 'owner' | 'admin' | null;
   refreshConfig: () => Promise<void>;
+  storageType: string;
 }
 
-const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
+const UserConfig = ({
+  config,
+  role,
+  refreshConfig,
+  storageType,
+}: UserConfigProps) => {
   const [userSettings, setUserSettings] = useState({
     enableRegistration: false,
   });
@@ -144,13 +150,9 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
   // 当前登录用户名
   const currentUsername = getAuthInfoFromBrowserCookie()?.username || null;
 
-  // 检测存储类型是否为 d1
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
-  const isUpstashStorage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
+  // 存储后端类型只从已鉴权的 /api/admin/config 取，不读公开的 RUNTIME_CONFIG
+  const isD1Storage = storageType === 'd1';
+  const isUpstashStorage = storageType === 'upstash';
 
   useEffect(() => {
     if (config?.UserConfig) {
@@ -976,9 +978,11 @@ const VideoSourceConfig = ({
 const CategoryConfig = ({
   config,
   refreshConfig,
+  storageType,
 }: {
   config: AdminConfig | null;
   refreshConfig: () => Promise<void>;
+  storageType: string;
 }) => {
   const [categories, setCategories] = useState<CustomCategory[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -991,13 +995,9 @@ const CategoryConfig = ({
     from: 'config',
   });
 
-  // 检测存储类型是否为 d1 或 upstash
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
-  const isUpstashStorage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
+  // 存储后端类型只从已鉴权的 /api/admin/config 取，不读公开的 RUNTIME_CONFIG
+  const isD1Storage = storageType === 'd1';
+  const isUpstashStorage = storageType === 'upstash';
 
   // dnd-kit 传感器
   const sensors = useSensors(
@@ -1349,7 +1349,13 @@ const CategoryConfig = ({
 };
 
 // 新增站点配置组件
-const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
+const SiteConfigComponent = ({
+  config,
+  storageType,
+}: {
+  config: AdminConfig | null;
+  storageType: string;
+}) => {
   const [siteSettings, setSiteSettings] = useState<SiteConfig>({
     SiteName: '',
     Announcement: '',
@@ -1362,13 +1368,9 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
   // 保存状态
   const [saving, setSaving] = useState(false);
 
-  // 检测存储类型是否为 d1 或 upstash
-  const isD1Storage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'd1';
-  const isUpstashStorage =
-    typeof window !== 'undefined' &&
-    (window as any).RUNTIME_CONFIG?.STORAGE_TYPE === 'upstash';
+  // 存储后端类型只从已鉴权的 /api/admin/config 取，不读公开的 RUNTIME_CONFIG
+  const isD1Storage = storageType === 'd1';
+  const isUpstashStorage = storageType === 'upstash';
 
   useEffect(() => {
     if (config?.SiteConfig) {
@@ -1691,6 +1693,8 @@ function AdminPageClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [role, setRole] = useState<'owner' | 'admin' | null>(null);
+  // 存储后端类型（仅从已鉴权的 /api/admin/config 返回取到）
+  const [storageType, setStorageType] = useState('');
   const [expandedTabs, setExpandedTabs] = useState<{ [key: string]: boolean }>({
     userConfig: false,
     videoSource: false,
@@ -1716,6 +1720,7 @@ function AdminPageClient() {
       const data = (await response.json()) as AdminConfigResult;
       setConfig(data.Config);
       setRole(data.Role);
+      setStorageType(data.StorageType || '');
     } catch (err) {
       const msg = err instanceof Error ? err.message : '获取配置失败';
       showError(msg);
@@ -1821,7 +1826,7 @@ function AdminPageClient() {
             isExpanded={expandedTabs.siteConfig}
             onToggle={() => toggleTab('siteConfig')}
           >
-            <SiteConfigComponent config={config} />
+            <SiteConfigComponent config={config} storageType={storageType} />
           </CollapsibleTab>
 
           <div className='space-y-4'>
@@ -1838,6 +1843,7 @@ function AdminPageClient() {
                 config={config}
                 role={role}
                 refreshConfig={fetchConfig}
+                storageType={storageType}
               />
             </CollapsibleTab>
 
@@ -1865,7 +1871,11 @@ function AdminPageClient() {
               isExpanded={expandedTabs.categoryConfig}
               onToggle={() => toggleTab('categoryConfig')}
             >
-              <CategoryConfig config={config} refreshConfig={fetchConfig} />
+              <CategoryConfig
+                config={config}
+                refreshConfig={fetchConfig}
+                storageType={storageType}
+              />
             </CollapsibleTab>
           </div>
         </div>
