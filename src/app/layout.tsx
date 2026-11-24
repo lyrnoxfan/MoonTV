@@ -78,6 +78,15 @@ export default async function RootLayout({
     }));
   }
 
+  // 未配置图片代理时，默认走站内 /api/image-proxy：它以
+  // Referer: https://movie.douban.com/ 回源取图。豆瓣图床
+  // img*.doubanio.com 有防盗链，直连（无 Referer 回 418、
+  // 外站 Referer 回 403）加载失败，首页封面因此全是灰色占位。
+  // 环境变量 / 管理员配置里配了代理的，仍以配置为准。
+  if (!imageProxy) {
+    imageProxy = '/api/image-proxy?url=';
+  }
+
   // 将运行时配置注入到全局 window 对象，供客户端在运行时读取
   // 注意：不要把 STORAGE_TYPE 等后端类型下发到前端——这段脚本内联在
   // 每个页面（含未登录可见的 /login），会直接暴露持久化后端。
