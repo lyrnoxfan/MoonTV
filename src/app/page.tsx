@@ -4,7 +4,7 @@
 
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 // 客户端收藏 API
 import {
@@ -18,7 +18,6 @@ import { DoubanItem } from '@/lib/types';
 
 import CapsuleSwitch from '@/components/CapsuleSwitch';
 import ContinueWatching from '@/components/ContinueWatching';
-import HomeHero, { HeroItem } from '@/components/HomeHero';
 import PageLayout from '@/components/PageLayout';
 import ScrollableRow from '@/components/ScrollableRow';
 import { useSite } from '@/components/SiteProvider';
@@ -155,43 +154,9 @@ function HomeClient() {
     localStorage.setItem('hasSeenAnnouncement', announcement); // 记录已查看弹窗
   };
 
-  // Hero 轮播素材：热门电影 2 部 + 热门剧集 2 部 + 热门综艺 1 部
-  const heroItems: HeroItem[] = useMemo(() => {
-    const pick = (
-      list: DoubanItem[],
-      type: HeroItem['type'],
-      typeLabel: string
-    ): HeroItem[] =>
-      list.slice(0, 2).map((item) => ({
-        id: item.id,
-        title: item.title,
-        poster: item.poster,
-        rate: item.rate,
-        year: item.year,
-        type,
-        typeLabel,
-      }));
-    return [
-      ...pick(hotMovies, 'movie', '电影'),
-      ...pick(hotTvShows, 'tv', '剧集'),
-      ...hotVarietyShows.slice(0, 1).map((item) => ({
-        id: item.id,
-        title: item.title,
-        poster: item.poster,
-        rate: item.rate,
-        year: item.year,
-        type: 'show' as const,
-        typeLabel: '综艺',
-      })),
-    ];
-  }, [hotMovies, hotTvShows, hotVarietyShows]);
-
   return (
-    <PageLayout transparentTop={activeTab === 'home'}>
-      {/* 首页 Hero 轮播 */}
-      {activeTab === 'home' && <HomeHero items={heroItems} loading={loading} />}
-
-      <div className='px-4 sm:px-8 xl:px-12 py-4 sm:py-8 overflow-visible'>
+    <PageLayout>
+      <div className='px-2 sm:px-10 py-4 sm:py-8 overflow-visible'>
         {/* 顶部 Tab 切换 */}
         <div className='mb-8 flex justify-center'>
           <CapsuleSwitch
@@ -204,7 +169,7 @@ function HomeClient() {
           />
         </div>
 
-        <div className='mx-auto w-full max-w-[1680px]'>
+        <div className='max-w-[95%] mx-auto'>
           {activeTab === 'favorites' ? (
             // 收藏夹视图
             <section className='mb-8'>
@@ -214,7 +179,7 @@ function HomeClient() {
                 </h2>
                 {favoriteItems.length > 0 && (
                   <button
-                    className='text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400'
+                    className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                     onClick={async () => {
                       await clearAllFavorites();
                       setFavoriteItems([]);
@@ -256,7 +221,7 @@ function HomeClient() {
                   </h2>
                   <Link
                     href='/douban?type=movie'
-                    className='flex items-center text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400'
+                    className='flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                   >
                     查看更多
                     <ChevronRight className='w-4 h-4 ml-1' />
@@ -304,7 +269,7 @@ function HomeClient() {
                   </h2>
                   <Link
                     href='/douban?type=tv'
-                    className='flex items-center text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400'
+                    className='flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                   >
                     查看更多
                     <ChevronRight className='w-4 h-4 ml-1' />
@@ -351,7 +316,7 @@ function HomeClient() {
                   </h2>
                   <Link
                     href='/douban?type=show'
-                    className='flex items-center text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400'
+                    className='flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                   >
                     查看更多
                     <ChevronRight className='w-4 h-4 ml-1' />
@@ -401,7 +366,7 @@ function HomeClient() {
         >
           <div className='w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900 transform transition-all duration-300 hover:shadow-2xl'>
             <div className='flex justify-between items-start mb-4'>
-              <h3 className='text-2xl font-bold tracking-tight text-gray-800 dark:text-white border-b border-brand-500 pb-1'>
+              <h3 className='text-2xl font-bold tracking-tight text-gray-800 dark:text-white border-b border-green-500 pb-1'>
                 提示
               </h3>
               <button
@@ -411,8 +376,8 @@ function HomeClient() {
               ></button>
             </div>
             <div className='mb-6'>
-              <div className='relative overflow-hidden rounded-lg mb-4 bg-brand-50 dark:bg-brand-900/20'>
-                <div className='absolute inset-y-0 left-0 w-1.5 bg-brand-500 dark:bg-brand-400'></div>
+              <div className='relative overflow-hidden rounded-lg mb-4 bg-green-50 dark:bg-green-900/20'>
+                <div className='absolute inset-y-0 left-0 w-1.5 bg-green-500 dark:bg-green-400'></div>
                 <p className='ml-4 text-gray-600 dark:text-gray-300 leading-relaxed'>
                   {announcement}
                 </p>
@@ -420,7 +385,7 @@ function HomeClient() {
             </div>
             <button
               onClick={() => handleCloseAnnouncement(announcement)}
-              className='w-full rounded-lg bg-gradient-to-r from-brand-600 to-brand-700 px-4 py-3 text-white font-medium shadow-md hover:shadow-lg hover:from-brand-700 hover:to-brand-800 dark:from-brand-600 dark:to-brand-700 dark:hover:from-brand-700 dark:hover:to-brand-800 transition-all duration-300 transform hover:-translate-y-0.5'
+              className='w-full rounded-lg bg-gradient-to-r from-green-600 to-green-700 px-4 py-3 text-white font-medium shadow-md hover:shadow-lg hover:from-green-700 hover:to-green-800 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 transition-all duration-300 transform hover:-translate-y-0.5'
             >
               我知道了
             </button>

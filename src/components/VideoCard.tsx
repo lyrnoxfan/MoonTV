@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { CheckCircle, Heart, Link, PlayCircleIcon, Star } from 'lucide-react';
+import { CheckCircle, Heart, Link, PlayCircleIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -295,7 +295,7 @@ export default function VideoCard({
             <PlayCircleIcon
               size={50}
               strokeWidth={0.8}
-              className='text-white fill-transparent transition-all duration-300 ease-out hover:fill-brand-500 hover:scale-[1.1]'
+              className='text-white fill-transparent transition-all duration-300 ease-out hover:fill-green-500 hover:scale-[1.1]'
             />
           </div>
         )}
@@ -307,7 +307,7 @@ export default function VideoCard({
               <CheckCircle
                 onClick={handleDeleteRecord}
                 size={20}
-                className='text-white transition-all duration-300 ease-out hover:stroke-brand-500 hover:scale-[1.1]'
+                className='text-white transition-all duration-300 ease-out hover:stroke-green-500 hover:scale-[1.1]'
               />
             )}
             {config.showHeart && (
@@ -324,16 +324,15 @@ export default function VideoCard({
           </div>
         )}
 
-        {/* 评分徽章（IceTV 式：右上深色胶囊 + 琥珀星） */}
+        {/* 徽章 */}
         {config.showRating && rate && (
-          <div className='absolute top-2 right-2 flex items-center gap-0.5 rounded-full bg-black/60 px-2 py-0.5 text-xs font-semibold text-white shadow-md backdrop-blur-sm transition-all duration-300 ease-out group-hover:scale-110'>
-            <Star size={12} className='fill-amber-400 text-amber-400' />
+          <div className='absolute top-2 right-2 bg-pink-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-all duration-300 ease-out group-hover:scale-110'>
             {rate}
           </div>
         )}
 
         {actualEpisodes && actualEpisodes > 1 && (
-          <div className='absolute top-2 left-2 bg-black/60 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md backdrop-blur-sm transition-all duration-300 ease-out group-hover:scale-110'>
+          <div className='absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-md shadow-md transition-all duration-300 ease-out group-hover:scale-110'>
             {currentEpisode
               ? `${currentEpisode}/${actualEpisodes}`
               : actualEpisodes}
@@ -347,9 +346,9 @@ export default function VideoCard({
             target='_blank'
             rel='noopener noreferrer'
             onClick={(e) => e.stopPropagation()}
-            className='absolute bottom-2 left-2 opacity-0 -translate-x-2 transition-all duration-300 ease-in-out delay-100 group-hover:opacity-100 group-hover:translate-x-0'
+            className='absolute top-2 left-2 opacity-0 -translate-x-2 transition-all duration-300 ease-in-out delay-100 group-hover:opacity-100 group-hover:translate-x-0'
           >
-            <div className='bg-brand-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:bg-brand-600 hover:scale-[1.1] transition-all duration-300 ease-out'>
+            <div className='bg-green-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:bg-green-600 hover:scale-[1.1] transition-all duration-300 ease-out'>
               <Link size={16} />
             </div>
           </a>
@@ -360,16 +359,16 @@ export default function VideoCard({
       {config.showProgress && progress !== undefined && (
         <div className='mt-1 h-1 w-full bg-gray-200 rounded-full overflow-hidden'>
           <div
-            className='h-full bg-brand-500 transition-all duration-500 ease-out'
+            className='h-full bg-green-500 transition-all duration-500 ease-out'
             style={{ width: `${progress}%` }}
           />
         </div>
       )}
 
       {/* 标题与来源 */}
-      <div className='mt-2 text-left'>
+      <div className='mt-2 text-center'>
         <div className='relative'>
-          <span className='block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-brand-600 dark:group-hover:text-brand-400 peer'>
+          <span className='block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-green-600 dark:group-hover:text-green-400 peer'>
             {actualTitle}
           </span>
           {/* 自定义 tooltip */}
@@ -380,7 +379,7 @@ export default function VideoCard({
         </div>
         {config.showSourceName && source_name && (
           <span className='block text-xs text-gray-500 dark:text-gray-400 mt-1'>
-            <span className='inline-block border rounded px-2 py-0.5 border-gray-500/60 dark:border-gray-400/60 transition-all duration-300 ease-in-out group-hover:border-brand-500/60 group-hover:text-brand-600 dark:group-hover:text-brand-400'>
+            <span className='inline-block border rounded px-2 py-0.5 border-gray-500/60 dark:border-gray-400/60 transition-all duration-300 ease-in-out group-hover:border-green-500/60 group-hover:text-green-600 dark:group-hover:text-green-400'>
               {source_name}
             </span>
           </span>
