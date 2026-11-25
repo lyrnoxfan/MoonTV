@@ -30,16 +30,11 @@ body {
 }
 
 html:not(.dark) body {
-  background: linear-gradient(
-    180deg,
-    #e6f3fb 0%,
-    #eaf3f7 18%,
-    #f7f7f3 38%,
-    #e9ecef 60%,
-    #dbe3ea 80%,
-    #d3dde6 100%
-  );
-  background-attachment: fixed;
+  background: #f6f7f9;
+}
+
+html.dark body {
+  background: #0d0e11;
 }
 
 /* 自定义滚动条样式 */

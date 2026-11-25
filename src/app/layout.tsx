@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#0d0e11',
   viewportFit: 'cover',
 };
 
@@ -118,7 +118,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.className} min-h-screen bg-white text-gray-900 dark:bg-black dark:text-gray-200`}
+        className={`${inter.className} min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-200`}
       >
         <ThemeProvider
           attribute='class'
