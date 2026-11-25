@@ -43,3 +43,6 @@ sitemap-*.xml
 # generated files
 src/lib/runtime.ts
 public/manifest.json
+# next-pwa build output
+public/sw.js
+public/workbox-*.js
